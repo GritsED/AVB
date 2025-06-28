@@ -4,5 +4,5 @@ CREATE TABLE IF NOT EXISTS users
     firstname VARCHAR(250) NOT NULL,
     lastname  VARCHAR(250) NOT NULL,
     phone     VARCHAR(20)  NOT NULL UNIQUE,
-    company_Id INT NOT NULL
-)
+    company_id INT NOT NULL
+);

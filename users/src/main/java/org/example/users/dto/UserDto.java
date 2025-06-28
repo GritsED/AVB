@@ -14,5 +14,5 @@ public class UserDto {
 
     String phone;
 
-    Company companyId;
+//    Company companyId;
 }

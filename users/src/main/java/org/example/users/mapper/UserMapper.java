@@ -4,19 +4,21 @@ import org.example.users.dto.NewUserDto;
 import org.example.users.dto.UpdateUserDto;
 import org.example.users.dto.UserDto;
 import org.example.users.model.User;
-import org.mapstruct.BeanMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.*;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface UserMapper {
 
     @Mapping(target = "id", ignore = true)
+    @Mapping(source = "companyId", target = "companyId")
+    @Mapping(source = "firstname", target = "firstname")
+    @Mapping(source = "lastname", target = "lastname")
+    @Mapping(source = "phone", target = "phone")
     User toEntity(NewUserDto newUser);
 
     UserDto toDto(User user);
 
+    @Mapping(target = "id", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    void updateUser(User user, UpdateUserDto updateUserDto);
+    void updateUser(@MappingTarget User user, UpdateUserDto updateUserDto);
 }
