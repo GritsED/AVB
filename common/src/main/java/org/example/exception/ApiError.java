@@ -1,4 +1,4 @@
-package org.example.users.exception;
+package org.example.exception;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;

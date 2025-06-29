@@ -1,4 +1,4 @@
-package org.example.users.exception;
+package org.example.exception;
 
 public class ValidationException extends RuntimeException {
     public ValidationException(String message) {
