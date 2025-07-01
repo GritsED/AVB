@@ -1,23 +1,18 @@
-package org.example.dto;
+package org.example.companies.dto;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
-@Data
+import java.math.BigDecimal;
+
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserDto {
-    Long id;
-
-    String firstname;
-
-    String lastname;
-
-    String phone;
-
-    CompanyDto company;
+public class UpdateCompanyDto {
+    String name;
+    BigDecimal budget;
 }

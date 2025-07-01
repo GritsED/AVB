@@ -22,3 +22,27 @@ services:
       timeout: 5s
       interval: 5s
       retries: 10
+
+  companies-server:
+    build: companies
+    image: companies-server
+    container_name: companies-server
+    ports:
+      - "8080:8080"
+    depends_on:
+      - companies-db
+
+  companies-db:
+    image: postgres:16.1
+    container_name: companies-db
+    ports:
+      - "2345:5432"
+    environment:
+      - POSTGRES_PASSWORD=companies
+      - POSTGRES_USER=companies
+      - POSTGRES_DB=companies
+    healthcheck:
+      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
+      timeout: 5s
+      interval: 5s
+      retries: 10

@@ -1,11 +1,11 @@
 package org.example.users.service;
 
 import lombok.RequiredArgsConstructor;
+import org.example.dto.UserDto;
+import org.example.exception.ConflictException;
+import org.example.exception.NotFoundException;
 import org.example.users.dto.NewUserDto;
 import org.example.users.dto.UpdateUserDto;
-import org.example.users.dto.UserDto;
-import org.example.users.exception.ConflictException;
-import org.example.users.exception.NotFoundException;
 import org.example.users.mapper.UserMapper;
 import org.example.users.model.User;
 import org.example.users.repository.UserRepository;
