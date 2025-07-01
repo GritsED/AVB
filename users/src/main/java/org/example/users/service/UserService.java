@@ -1,8 +1,8 @@
 package org.example.users.service;
 
+import org.example.dto.UserDto;
 import org.example.users.dto.NewUserDto;
 import org.example.users.dto.UpdateUserDto;
-import org.example.users.dto.UserDto;
 
 import java.util.List;
 
