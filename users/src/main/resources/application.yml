@@ -1,6 +1,9 @@
 server:
   port: 9090
 
+companies:
+  url: http://companies-server:8080
+
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
@@ -17,4 +20,4 @@ spring:
 
 logging:
   level:
-    root: DEBUG
+    root: INFO

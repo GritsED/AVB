@@ -1,19 +1,24 @@
 package org.example.users.service;
 
-import org.example.dto.UserDto;
+import org.example.dto.UserShortDto;
 import org.example.users.dto.NewUserDto;
 import org.example.users.dto.UpdateUserDto;
+import org.example.users.dto.UserFullDto;
 
 import java.util.List;
 
 public interface UserService {
-    UserDto addUser(NewUserDto newUserDto);
+    UserFullDto addUser(NewUserDto newUserDto);
 
-    List<UserDto> getAllUsers(Integer from, Integer size);
+    List<UserFullDto> getAllUsers(Integer from, Integer size);
 
-    UserDto getUserById(Long id);
+    UserFullDto getUserById(Long id);
 
-    UserDto updateUser(Long id, UpdateUserDto updateUserDto);
+    UserFullDto updateUser(Long id, UpdateUserDto updateUserDto);
 
     void deleteUser(Long id);
+
+    List<UserShortDto> getUsersByCompanyIds(List<Long> companyIds, Integer from, Integer size);
+
+    List<UserShortDto> getUsersByCompanyId(Long companyId, Integer from, Integer size);
 }

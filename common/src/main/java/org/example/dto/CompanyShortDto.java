@@ -6,18 +6,16 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserDto {
+public class CompanyShortDto {
     Long id;
 
-    String firstname;
+    String name;
 
-    String lastname;
-
-    String phone;
-
-    CompanyDto company;
+    BigDecimal budget;
 }
