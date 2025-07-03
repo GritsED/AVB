@@ -30,13 +30,6 @@ public class CompanyServiceImpl implements CompanyService {
     private final CompanyRepository companyRepository;
     private final CompanyMapper companyMapper;
     private final UsersClient usersClient;
-    @Value("${users.url}")
-    private String usersUrl;
-
-    @PostConstruct
-    public void printUsersUrl() {
-        System.out.println("✅ Users URL = " + usersUrl);
-    }
 
     @Override
     @Transactional

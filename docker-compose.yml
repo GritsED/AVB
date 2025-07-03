@@ -1,4 +1,14 @@
 services:
+  gateway:
+    build: gateway
+    image: gateway-server
+    container_name: gateway-server
+    ports:
+      - "8085:8085"
+    depends_on:
+      - users-server
+      - companies-server
+
   users-server:
     build: users
     image: users-server
