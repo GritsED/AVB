@@ -1,11 +1,15 @@
 package org.example.users.service;
 
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
-import org.example.dto.UserDto;
+import org.example.dto.CompanyShortDto;
+import org.example.dto.UserShortDto;
 import org.example.exception.ConflictException;
 import org.example.exception.NotFoundException;
+import org.example.users.client.CompaniesClient;
 import org.example.users.dto.NewUserDto;
 import org.example.users.dto.UpdateUserDto;
+import org.example.users.dto.UserFullDto;
 import org.example.users.mapper.UserMapper;
 import org.example.users.model.User;
 import org.example.users.repository.UserRepository;
@@ -16,6 +20,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,10 +31,11 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final CompaniesClient companiesClient;
 
     @Override
     @Transactional
-    public UserDto addUser(NewUserDto newUserDto) {
+    public UserFullDto addUser(NewUserDto newUserDto) {
         String phone = newUserDto.getPhone();
         String normalizedPhone = checkPhone(phone);
 
@@ -34,26 +43,46 @@ public class UserServiceImpl implements UserService {
         entity.setPhone(normalizedPhone);
 
         userRepository.save(entity);
-        return userMapper.toDto(entity);
+
+        Long companyId = newUserDto.getCompanyId();
+        CompanyShortDto companyShort = getCompanyShort(companyId);
+
+        return userMapper.toDto(entity, companyShort);
     }
 
     @Override
-    public List<UserDto> getAllUsers(Integer from, Integer size) {
-        Pageable pageable = PageRequest.of(from > 0 ? from / size : 0, size);
+    public List<UserFullDto> getAllUsers(Integer from, Integer size) {
+        Pageable pageable = getPageable(from, size);
         List<User> users = userRepository.findAll(pageable).getContent();
 
-        return users.stream().map(userMapper::toDto).toList();
+        List<Long> companyIds = users.stream()
+                .map(User::getCompanyId)
+                .filter(Objects::nonNull)
+                .distinct()
+                .toList();
+
+        List<CompanyShortDto> shortDtos = companiesClient.getCompaniesByIdsShort(companyIds);
+
+        Map<Long, CompanyShortDto> shortDtoMap = shortDtos.stream()
+                .collect(Collectors.toMap(CompanyShortDto::getId, Function.identity()));
+
+        return users.stream().map(user -> {
+                    CompanyShortDto companyShortDto = shortDtoMap.get(user.getCompanyId());
+                    return userMapper.toDto(user, companyShortDto);
+                })
+                .toList();
     }
 
     @Override
-    public UserDto getUserById(Long id) {
+    public UserFullDto getUserById(Long id) {
         User user = getUserOrThrow(id);
-        return userMapper.toDto(user);
+        CompanyShortDto company = getCompanyShort(user.getCompanyId());
+        return userMapper.toDto(user, company);
     }
 
     @Override
     @Transactional
-    public UserDto updateUser(Long id, UpdateUserDto updateUserDto) {
+    public UserFullDto updateUser(Long id, UpdateUserDto updateUserDto) {
         User user = getUserOrThrow(id);
 
         String phone = updateUserDto.getPhone();
@@ -64,16 +93,14 @@ public class UserServiceImpl implements UserService {
             }
         }
 
-//        Company company = null;
+        CompanyShortDto company = null;
         if (updateUserDto.getCompanyId() != null) {
-            /**
-             *  проверка на существование компании или 404
-             */
+            company = getCompanyShort(updateUserDto.getCompanyId());
         }
 
-        userMapper.updateUser(user, updateUserDto); // еще добавить компанию для маппинга
+        userMapper.updateUser(user, updateUserDto);
         userRepository.save(user);
-        return userMapper.toDto(user);
+        return userMapper.toDto(user, company);
     }
 
     @Override
@@ -83,9 +110,37 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteById(id);
     }
 
+    @Override
+    public List<UserShortDto> getUsersByCompanyIds(List<Long> companyIds, Integer from, Integer size) {
+        return getUserByCompanyIds(companyIds, from, size);
+    }
+
+    @Override
+    public List<UserShortDto> getUsersByCompanyId(Long companyId, Integer from, Integer size) {
+        return getUserByCompanyIds(List.of(companyId), from, size);
+    }
+
+    private List<UserShortDto> getUserByCompanyIds(List<Long> companyIds, Integer from, Integer size) {
+        Pageable pageable = getPageable(from, size);
+        List<User> userList = userRepository.findAllByCompanyIdIn(companyIds, pageable).getContent();
+        return userList.stream().map(userMapper::toShortDto).toList();
+    }
+
+    private static PageRequest getPageable(Integer from, Integer size) {
+        return PageRequest.of(from > 0 ? from / size : 0, size);
+    }
+
+    private CompanyShortDto getCompanyShort(Long companyId) {
+        try {
+            return companiesClient.getCompanyShort(companyId);
+        } catch (FeignException.NotFound e) {
+            throw new NotFoundException(CompanyShortDto.class, companyId);
+        }
+    }
+
     private String checkPhone(String phone) {
         String normalizedPhone = PhoneNormalizer.normalize(phone, "RU");
-        if (userRepository.existsByPhone(phone)) {
+        if (userRepository.existsByPhone(normalizedPhone)) {
             throw new ConflictException("Phone is already in use");
         }
         return normalizedPhone;

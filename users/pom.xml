@@ -76,11 +76,6 @@
             <artifactId>libphonenumber</artifactId>
             <version>8.13.47</version>
         </dependency>
-        <dependency>
-            <groupId>org.example</groupId>
-            <artifactId>companies</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
 
         <dependency>
             <groupId>org.example</groupId>

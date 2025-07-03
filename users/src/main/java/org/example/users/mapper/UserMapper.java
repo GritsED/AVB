@@ -1,8 +1,10 @@
 package org.example.users.mapper;
 
-import org.example.dto.UserDto;
+import org.example.dto.CompanyShortDto;
+import org.example.dto.UserShortDto;
 import org.example.users.dto.NewUserDto;
 import org.example.users.dto.UpdateUserDto;
+import org.example.users.dto.UserFullDto;
 import org.example.users.model.User;
 import org.mapstruct.*;
 
@@ -16,9 +18,16 @@ public interface UserMapper {
     @Mapping(source = "phone", target = "phone")
     User toEntity(NewUserDto newUser);
 
-    //    @Mapping(source = "company", target = "company")
+    @Mapping(source = "company", target = "company")
     @Mapping(source = "user.id", target = "id")
-    UserDto toDto(User user);
+    UserFullDto toDto(User user, CompanyShortDto company);
+
+    @Mapping(source = "id", target = "id")
+    @Mapping(source = "firstname", target = "firstname")
+    @Mapping(source = "lastname", target = "lastname")
+    @Mapping(source = "phone", target = "phone")
+    @Mapping(source = "companyId", target = "companyId")
+    UserShortDto toShortDto(User user);
 
     @Mapping(target = "id", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
