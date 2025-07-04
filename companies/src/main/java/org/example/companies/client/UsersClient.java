@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@FeignClient(name = "users", url = "${users.url}")
+@FeignClient(name = "users")
 public interface UsersClient {
     @GetMapping("/users/internal")
     List<UserShortDto> getUsersByCompanyIds(@RequestParam("companyIds") List<Long> companyIds,

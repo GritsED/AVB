@@ -1,6 +1,5 @@
 package org.example.companies.service;
 
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.example.companies.client.UsersClient;
 import org.example.companies.dto.CompanyFullDto;
@@ -12,7 +11,6 @@ import org.example.companies.repository.CompanyRepository;
 import org.example.dto.CompanyShortDto;
 import org.example.dto.UserShortDto;
 import org.example.exception.NotFoundException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
