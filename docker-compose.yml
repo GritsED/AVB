@@ -1,0 +1,94 @@
+services:
+  eureka-server:
+    build: eureka
+    image: eureka-server
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8761/actuator/health" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  gateway:
+    build: gateway
+    image: gateway-server
+    container_name: gateway-server
+    ports:
+      - "8085:8085"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      users-server:
+        condition: service_healthy
+      companies-server:
+        condition: service_healthy
+
+  users-server:
+    build: users
+    image: users-server
+    container_name: users-server
+    ports:
+      - "9090:9090"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      users-db:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9090/actuator/health" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+
+  users-db:
+    image: postgres:16.1
+    container_name: users-db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=users
+      - POSTGRES_USER=users
+      - POSTGRES_DB=users
+    healthcheck:
+      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
+      timeout: 5s
+      interval: 5s
+      retries: 10
+
+  companies-server:
+    build: companies
+    image: companies-server
+    container_name: companies-server
+    ports:
+      - "8080:8080"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      companies-db:
+        condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/actuator/health" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  companies-db:
+    image: postgres:16.1
+    container_name: companies-db
+    ports:
+      - "2345:5432"
+    environment:
+      - POSTGRES_PASSWORD=companies
+      - POSTGRES_USER=companies
+      - POSTGRES_DB=companies
+    healthcheck:
+      test: pg_isready -q -d $$POSTGRES_DB -U $$POSTGRES_USER
+      timeout: 5s
+      interval: 5s
+      retries: 10
