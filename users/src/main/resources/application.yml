@@ -5,6 +5,8 @@ companies:
   url: http://companies-server:8080
 
 spring:
+  application:
+    name: users
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://users-db:5432/users
@@ -21,3 +23,10 @@ spring:
 logging:
   level:
     root: INFO
+
+eureka:
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka

@@ -3,13 +3,11 @@ package org.example;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
-@EnableFeignClients
 @EnableDiscoveryClient
-public class CompanyApp {
+public class GatewayApp {
     public static void main(String[] args) {
-        SpringApplication.run(CompanyApp.class, args);
+        SpringApplication.run(GatewayApp.class, args);
     }
 }

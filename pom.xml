@@ -13,6 +13,8 @@
         <module>common</module>
         <module>companies</module>
         <module>users</module>
+        <module>gateway</module>
+        <module>eureka</module>
     </modules>
 
     <properties>
@@ -25,6 +27,14 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-starter-parent</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
