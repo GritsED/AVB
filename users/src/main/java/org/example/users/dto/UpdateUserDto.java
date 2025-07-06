@@ -13,9 +13,9 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UpdateUserDto {
-    @Size(min = 2, max = 50)
+    @Size(min = 2, max = 150)
     String firstname;
-    @Size(min = 2, max = 50)
+    @Size(min = 2, max = 150)
     String lastname;
     @Size(min = 11, max = 20)
     String phone;

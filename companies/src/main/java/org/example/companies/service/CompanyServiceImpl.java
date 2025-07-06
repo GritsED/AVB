@@ -65,13 +65,9 @@ public class CompanyServiceImpl implements CompanyService {
                 .map(Company::getId)
                 .toList();
 
-        List<UserShortDto> users = usersClient.getUsersByCompanyIds(companyIds, from, size);
+        List<UserShortDto> users = usersClient.getUsersByCompanyIds(companyIds);
         Map<Long, List<UserShortDto>> usersMap = users.stream().collect(Collectors.groupingBy(UserShortDto::getCompanyId));
-        return companyList.stream().map(company -> {
-                    List<UserShortDto> usersForCompany = usersMap.getOrDefault(company.getId(), Collections.emptyList());
-                    return companyMapper.toDto(company, usersForCompany);
-                })
-                .toList();
+        return companyMapper.toDtoList(companyList, usersMap);
     }
 
     @Override
@@ -87,9 +83,7 @@ public class CompanyServiceImpl implements CompanyService {
     @Override
     public List<CompanyShortDto> getCompaniesByIds(List<Long> companyIds) {
         List<Company> companies = companyRepository.findAllById(companyIds);
-        return companies.stream()
-                .map(companyMapper::toShortDto)
-                .toList();
+        return companyMapper.toShortDtoList(companies);
     }
 
     @Override
@@ -99,7 +93,7 @@ public class CompanyServiceImpl implements CompanyService {
     }
 
     private List<UserShortDto> getUsersByCompanyId(Long id) {
-        return usersClient.getUsersByCompanyId(id, 0, 10);
+        return usersClient.getUsersByCompanyId(id);
     }
 
     private Company getCompanyOrThrow(Long id) {

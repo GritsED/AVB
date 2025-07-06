@@ -18,7 +18,7 @@ public interface UserService {
 
     void deleteUser(Long id);
 
-    List<UserShortDto> getUsersByCompanyIds(List<Long> companyIds, Integer from, Integer size);
+    List<UserShortDto> getUsersByCompanyIds(List<Long> companyIds);
 
-    List<UserShortDto> getUsersByCompanyId(Long companyId, Integer from, Integer size);
+    List<UserShortDto> getUsersByCompanyId(Long companyId);
 }
