@@ -11,12 +11,8 @@ import java.util.List;
 @FeignClient(name = "users")
 public interface UsersClient {
     @GetMapping("/users/internal")
-    List<UserShortDto> getUsersByCompanyIds(@RequestParam("companyIds") List<Long> companyIds,
-                                            @RequestParam(defaultValue = "0") Integer from,
-                                            @RequestParam(defaultValue = "10") Integer size);
+    List<UserShortDto> getUsersByCompanyIds(@RequestParam("companyIds") List<Long> companyIds);
 
     @GetMapping("/users/internal/{companyId}")
-    List<UserShortDto> getUsersByCompanyId(@PathVariable("companyId") Long companyId,
-                                           @RequestParam(defaultValue = "0") Integer from,
-                                           @RequestParam(defaultValue = "10") Integer size);
+    List<UserShortDto> getUsersByCompanyId(@PathVariable("companyId") Long companyId);
 }

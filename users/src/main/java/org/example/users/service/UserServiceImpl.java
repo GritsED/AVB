@@ -66,11 +66,7 @@ public class UserServiceImpl implements UserService {
         Map<Long, CompanyShortDto> shortDtoMap = shortDtos.stream()
                 .collect(Collectors.toMap(CompanyShortDto::getId, Function.identity()));
 
-        return users.stream().map(user -> {
-                    CompanyShortDto companyShortDto = shortDtoMap.get(user.getCompanyId());
-                    return userMapper.toDto(user, companyShortDto);
-                })
-                .toList();
+        return userMapper.toDtoList(users, shortDtoMap);
     }
 
     @Override
@@ -93,10 +89,8 @@ public class UserServiceImpl implements UserService {
             }
         }
 
-        CompanyShortDto company = null;
-        if (updateUserDto.getCompanyId() != null) {
-            company = getCompanyShort(updateUserDto.getCompanyId());
-        }
+        CompanyShortDto company = updateUserDto.getCompanyId() != null ? getCompanyShort(updateUserDto.getCompanyId())
+                : getCompanyShort(user.getCompanyId());
 
         userMapper.updateUser(user, updateUserDto);
         userRepository.save(user);
@@ -111,19 +105,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserShortDto> getUsersByCompanyIds(List<Long> companyIds, Integer from, Integer size) {
-        return getUserByCompanyIds(companyIds, from, size);
+    public List<UserShortDto> getUsersByCompanyIds(List<Long> companyIds) {
+        return getUserByCompanyIds(companyIds);
     }
 
     @Override
-    public List<UserShortDto> getUsersByCompanyId(Long companyId, Integer from, Integer size) {
-        return getUserByCompanyIds(List.of(companyId), from, size);
+    public List<UserShortDto> getUsersByCompanyId(Long companyId) {
+        return getUserByCompanyIds(List.of(companyId));
     }
 
-    private List<UserShortDto> getUserByCompanyIds(List<Long> companyIds, Integer from, Integer size) {
-        Pageable pageable = getPageable(from, size);
-        List<User> userList = userRepository.findAllByCompanyIdIn(companyIds, pageable).getContent();
-        return userList.stream().map(userMapper::toShortDto).toList();
+    private List<UserShortDto> getUserByCompanyIds(List<Long> companyIds) {
+        List<User> userList = userRepository.findAllByCompanyIdIn(companyIds);
+        return userMapper.toDtos(userList);
     }
 
     private static PageRequest getPageable(Integer from, Integer size) {

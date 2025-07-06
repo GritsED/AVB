@@ -8,6 +8,9 @@ import org.example.users.dto.UserFullDto;
 import org.example.users.model.User;
 import org.mapstruct.*;
 
+import java.util.List;
+import java.util.Map;
+
 @Mapper(componentModel = "spring")
 public interface UserMapper {
 
@@ -32,4 +35,12 @@ public interface UserMapper {
     @Mapping(target = "id", ignore = true)
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateUser(@MappingTarget User user, UpdateUserDto updateUserDto);
+
+    List<UserShortDto> toDtos(List<User> users);
+
+    default List<UserFullDto> toDtoList(List<User> users, Map<Long, CompanyShortDto> companyMap) {
+        return users.stream()
+                .map(user -> toDto(user, companyMap.get(user.getCompanyId())))
+                .toList();
+    }
 }
